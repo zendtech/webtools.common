@@ -29,8 +29,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.wst.validation.Validator.V1;
 import org.eclipse.wst.validation.internal.ConfigurationManager;
 import org.eclipse.wst.validation.internal.ContentTypeWrapper;
@@ -44,6 +42,7 @@ import org.eclipse.wst.validation.internal.Misc;
 import org.eclipse.wst.validation.internal.PerformanceMonitor;
 import org.eclipse.wst.validation.internal.ProjectUnavailableError;
 import org.eclipse.wst.validation.internal.ValManager;
+import org.eclipse.wst.validation.internal.ValManager.UseProjectPreferences;
 import org.eclipse.wst.validation.internal.ValOperation;
 import org.eclipse.wst.validation.internal.ValPrefManagerGlobal;
 import org.eclipse.wst.validation.internal.ValPrefManagerProject;
@@ -51,14 +50,12 @@ import org.eclipse.wst.validation.internal.ValType;
 import org.eclipse.wst.validation.internal.ValidationRunner;
 import org.eclipse.wst.validation.internal.ValidatorMetaData;
 import org.eclipse.wst.validation.internal.ValidatorMutable;
-import org.eclipse.wst.validation.internal.ValManager.UseProjectPreferences;
 import org.eclipse.wst.validation.internal.model.GlobalPreferences;
 import org.eclipse.wst.validation.internal.model.GlobalPreferencesValues;
 import org.eclipse.wst.validation.internal.model.ProjectPreferences;
 import org.eclipse.wst.validation.internal.operations.ValidationBuilder;
 import org.eclipse.wst.validation.internal.operations.ValidatorManager;
 import org.eclipse.wst.validation.internal.operations.WorkbenchReporter;
-import org.eclipse.wst.validation.internal.plugin.ValidationPlugin;
 import org.eclipse.wst.validation.internal.provisional.core.IReporter;
 
 
@@ -169,13 +166,6 @@ public final class ValidationFramework {
 			_performanceMonitor = PerformanceMonitor.create(traceTimes, traceFile, useDoubles);
 		}
 		return _performanceMonitor;
-	}
-	
-	/**
-	 * Answer the preference store that holds the persisted global validation settings.
-	 */
-	public IEclipsePreferences getPreferenceStore(){
-		return new InstanceScope().getNode(ValidationPlugin.PLUGIN_ID);
 	}
 	
 	public IReporter getReporter(IProject project, IProgressMonitor monitor){

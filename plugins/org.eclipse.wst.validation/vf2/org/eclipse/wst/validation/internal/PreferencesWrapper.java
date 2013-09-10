@@ -10,14 +10,18 @@
  *******************************************************************************/
 package org.eclipse.wst.validation.internal;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.wst.validation.ValidationFramework;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.wst.validation.internal.plugin.ValidationPlugin;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -94,15 +98,30 @@ public abstract class PreferencesWrapper {
 
 public final static class PreferencesWrapperPersistent extends PreferencesWrapper {
 	
+	private final Preferences _defaultPrefs;
 	private final Preferences _preferences;
 	
-	public PreferencesWrapperPersistent(Preferences preferences){
+	public PreferencesWrapperPersistent() {
+		_preferences = InstanceScope.INSTANCE.getNode(ValidationPlugin.PLUGIN_ID);
+		_defaultPrefs = DefaultScope.INSTANCE.getNode(ValidationPlugin.PLUGIN_ID);
+	}
+	
+	public PreferencesWrapperPersistent(IProject project) {
+		_preferences = new ProjectScope(project).getNode(ValidationPlugin.PLUGIN_ID);
+		_defaultPrefs = DefaultScope.INSTANCE.getNode(ValidationPlugin.PLUGIN_ID);
+	}
+	
+	private PreferencesWrapperPersistent(Preferences preferences, Preferences defaultPrefs){
 		_preferences = preferences;
+		_defaultPrefs = defaultPrefs;
 	}
 	
 	@Override
 	public String[] childrenNames() throws BackingStoreException {
-		return _preferences.childrenNames();
+		Set<String> childrenNames = new HashSet<String>();
+		childrenNames.addAll(Arrays.asList(_preferences.childrenNames()));
+		childrenNames.addAll(Arrays.asList(_defaultPrefs.childrenNames()));
+		return childrenNames.toArray(new String[childrenNames.size()]);
 	}
 	
 	public void flush() throws BackingStoreException {
@@ -111,27 +130,30 @@ public final static class PreferencesWrapperPersistent extends PreferencesWrappe
 	
 	@Override
 	public String get(String key, String def) {
-		return _preferences.get(key, def);
+		return _preferences.get(key, _defaultPrefs.get(key, def));
 	}
 	
 	@Override
 	public boolean getBoolean(String key, boolean def) {
-		return _preferences.getBoolean(key, def);
+		return _preferences.getBoolean(key, _defaultPrefs.getBoolean(key, def));
 	}
 	
 	@Override
 	public int getInt(String key, int def) {
-		return _preferences.getInt(key, def);
+		return _preferences.getInt(key, _defaultPrefs.getInt(key, def));
 	}
 	
 	@Override
 	public long getLong(String key, long def) {
-		return _preferences.getLong(key, def);
+		return _preferences.getLong(key, _defaultPrefs.getLong(key, def));
 	}
 	
 	@Override
 	public String[] keys() throws BackingStoreException {
-		return _preferences.keys();
+		Set<String> keys = new HashSet<String>();
+		keys.addAll(Arrays.asList(_preferences.keys()));
+		keys.addAll(Arrays.asList(_defaultPrefs.keys()));
+		return keys.toArray(new String[keys.size()]);
 	}
 	
 	@Override
@@ -146,8 +168,7 @@ public final static class PreferencesWrapperPersistent extends PreferencesWrappe
 	
 	@Override
 	public PreferencesWrapper node(String path) {
-		Preferences prefs = _preferences.node(path);
-		return new PreferencesWrapperPersistent(prefs);
+		return new PreferencesWrapperPersistent(_preferences.node(path), _defaultPrefs.node(path));
 	}
 	
 	@Override
@@ -163,7 +184,7 @@ public final static class PreferencesWrapperPersistent extends PreferencesWrappe
 	
 	@Override
 	public boolean nodeExists(String pathName) throws BackingStoreException  {
-		return _preferences.nodeExists(pathName);
+		return _preferences.nodeExists(pathName) || _defaultPrefs.nodeExists(pathName);
 	}
 	
 	public void putBoolean(String key, boolean value) {
@@ -365,8 +386,8 @@ private final static class WrapperManger implements IProjectChangeListener {
 		
 		if (pw != null && (persistent == null || persistent == pw.isPersistent()))return pw;
 		
-		if (pw == null)pw = new PreferencesWrapperPersistent(ValidationPlugin.getPreferences(project));
-		if (persistent != null && persistent && pw.isTransient())pw = new PreferencesWrapperPersistent(ValidationPlugin.getPreferences(project));
+		if (pw == null)pw = new PreferencesWrapperPersistent(project);
+		if (persistent != null && persistent && pw.isTransient())pw = new PreferencesWrapperPersistent(project);
 		if (persistent != null && !persistent && pw.isPersistent())pw = new PreferencesWrapperTransient(pw, null);
 		
 		synchronized(_map){
@@ -402,7 +423,7 @@ private final static class WrapperManger implements IProjectChangeListener {
 		}
 		
 		while (persistent != null && persistent && !pw.isPersistent()){
-			PreferencesWrapper newPW = new PreferencesWrapperPersistent(ValidationFramework.getDefault().getPreferenceStore());
+			PreferencesWrapper newPW = new PreferencesWrapperPersistent();
 			if (_global.compareAndSet(pw, newPW))pw = newPW;
 			else pw = _global.get();			
 		}
@@ -410,7 +431,7 @@ private final static class WrapperManger implements IProjectChangeListener {
 	}
 	
 	private PreferencesWrapper createGlobal(Boolean persistent){
-		PreferencesWrapper pw = new PreferencesWrapperPersistent(ValidationFramework.getDefault().getPreferenceStore());
+		PreferencesWrapper pw = new PreferencesWrapperPersistent();
 		if (persistent == null || persistent)return pw;
 		return new PreferencesWrapperTransient(pw, null);
 	}
