@@ -31,7 +31,7 @@
     <platform-repo.url>http://download.eclipse.org/eclipse/updates/3.8/R-3.8.2-201301310800/</platform-repo.url>
     <emf-repo.url>http://download.eclipse.org/modeling/emf/emf/updates/2.8.x/</emf-repo.url>
     <gef-repo.url>http://download.eclipse.org/tools/gef/updates/milestones/</gef-repo.url>
-    <wtp-repo.url>http://download.eclipse.org/webtools/repository/juno/</wtp-repo.url>
+    <wtp-repo.url>http://download.eclipse.org/webtools/downloads/drops/R3.4.2/R-3.4.2-20130208151217/repository/</wtp-repo.url>
   </properties>
 
   <repositories>
@@ -235,6 +235,8 @@
     <module>plugins/org.eclipse.wst.internet.cache</module>
     <module>plugins/org.eclipse.wst.validation</module>
     <module>plugins/org.eclipse.wst.validation.ui</module>
+    
+    <module>releng/org.eclipse.webtools.common.repository</module>
   </modules>
   
 </project>
