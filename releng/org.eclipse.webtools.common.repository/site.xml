@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.wst.common_core.feature.patch_3.4.2.qualifier.jar" id="org.eclipse.wst.common_core.feature.patch" version="3.4.2.qualifier" patch="true">
+      <category name="webtools.common.patches"/>
+   </feature>
+   <category-def name="webtools.common.patches" label="WTP Common Tools Patches"/>
+</site>

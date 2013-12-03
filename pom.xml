@@ -215,6 +215,7 @@
     <module>docs/org.eclipse.wst.validation.infopop</module>
 
     <module>features/org.eclipse.wst.common_core.feature</module>
+    <module>features/org.eclipse.wst.common_core.feature.patch</module>
     <module>features/org.eclipse.wst.common_sdk.feature</module>
     <module>features/org.eclipse.wst.common_ui.feature</module>
     <module>features/org.eclipse.wst.common_ui.feature.patch</module>
