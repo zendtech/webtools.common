@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.wst.common_core.feature_3.6.0.qualifier.jar" id="org.eclipse.wst.common_core.feature" version="3.6.0.qualifier">
+      <category name="webtools.common"/>
+   </feature>
+   <category-def name="webtools.common" label="Webtools Common"/>
+</site>

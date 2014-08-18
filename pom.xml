@@ -14,17 +14,200 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.eclipse</groupId>
-    <artifactId>wtp-parent</artifactId>
-    <version>3.6.0-SNAPSHOT</version>
-    <relativePath>../wtp-parent</relativePath>
-  </parent>
-
   <groupId>org.eclipse.webtools.common</groupId>
   <artifactId>org.eclipse.webtools.common</artifactId>
   <version>3.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+  
+  <properties>
+    <tycho.version>0.21.0</tycho.version>
+    <tycho-extras.version>0.21.0</tycho-extras.version>
+    <tycho-repo.url>https://oss.sonatype.org/content/repositories/public/</tycho-repo.url>
+
+    <cbi-plugins.version>1.0.5</cbi-plugins.version>
+    <cbi-repo.url>https://repo.eclipse.org/content/repositories/cbi/</cbi-repo.url>
+    
+	<license-repo.url>http://download.eclipse.org/cbi/updates/license/</license-repo.url>    
+    <platform-repo.url>http://download.eclipse.org/eclipse/updates/4.4/R-4.4-201406061215/</platform-repo.url>
+    <emf-repo.url>http://download.eclipse.org/modeling/emf/emf/updates/2.10.x/</emf-repo.url>
+    <gef-repo.url>http://download.eclipse.org/tools/gef/updates/milestones/</gef-repo.url>
+    <wtp-repo.url>http://download.eclipse.org/webtools/downloads/drops/R3.6.0/R-3.6.0-20140602160322/repository/</wtp-repo.url>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>license</id>
+      <url>${license-repo.url}</url>
+      <layout>p2</layout>
+    </repository>
+    <repository>
+      <id>platform</id>
+      <url>${platform-repo.url}</url>
+      <layout>p2</layout>
+    </repository>
+    <repository>
+      <id>emf</id>
+      <url>${emf-repo.url}</url>
+      <layout>p2</layout>
+    </repository>
+    <repository>
+      <id>gef</id>
+      <url>${gef-repo.url}</url>
+      <layout>p2</layout>
+    </repository>
+    <repository>
+      <id>wtp</id>
+      <url>${wtp-repo.url}</url>
+      <layout>p2</layout>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>tycho</id>
+      <url>${tycho-repo.url}</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>cbi-repo</id>
+      <url>${cbi-repo.url}</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <extensions>true</extensions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <configuration>
+          <environments>
+            <environment>
+              <os>linux</os>
+              <ws>gtk</ws>
+              <arch>x86</arch>
+            </environment>
+            <environment>
+              <os>linux</os>
+              <ws>gtk</ws>
+              <arch>x86_64</arch>
+            </environment>
+            <environment>
+              <os>win32</os>
+              <ws>win32</ws>
+              <arch>x86</arch>
+            </environment>
+            <environment>
+              <os>win32</os>
+              <ws>win32</ws>
+              <arch>x86_64</arch>
+            </environment>
+            <environment>
+              <os>macosx</os>
+              <ws>cocoa</ws>
+              <arch>x86_64</arch>
+            </environment>
+          </environments>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>plugin-source</id>
+            <goals>
+              <goal>plugin-source</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>target-platform-configuration</artifactId>
+          <version>${tycho.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-compiler-plugin</artifactId>
+          <version>${tycho.version}</version>
+          <configuration>
+            <compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-packaging-plugin</artifactId>
+          <version>${tycho.version}</version>
+          <configuration>
+            <strictBinIncludes>false</strictBinIncludes>
+        	<format>'v'yyyyMMddHHmm</format>
+            <!--
+                Valid options: error, warning, and ignore
+                jgit.dirtyWorkingTree checking was added as of Tycho 0.19.0
+                see: https://bugs.eclipse.org/419030
+            -->
+            <jgit.dirtyWorkingTree>ignore</jgit.dirtyWorkingTree>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-surefire-plugin</artifactId>
+          <version>${tycho.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-source-plugin</artifactId>
+          <version>${tycho.version}</version>
+          <configuration>
+            <strictSrcIncludes>false</strictSrcIncludes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-p2-director-plugin</artifactId>
+          <version>${tycho.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-p2-repository-plugin</artifactId>
+          <version>${tycho.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho.extras</groupId>
+          <artifactId>tycho-source-feature-plugin</artifactId>
+          <version>${tycho-extras.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho.extras</groupId>
+          <artifactId>tycho-custom-bundle-plugin</artifactId>
+          <version>${tycho-extras.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
   <modules>
     <module>docs/org.eclipse.wst.common.api.doc</module>
@@ -32,6 +215,7 @@
     <module>docs/org.eclipse.wst.validation.infopop</module>
 
     <module>features/org.eclipse.wst.common_core.feature</module>
+    <module>features/org.eclipse.wst.common_core.feature.patch</module>
     <module>features/org.eclipse.wst.common_sdk.feature</module>
     <module>features/org.eclipse.wst.common_ui.feature</module>
 
@@ -51,5 +235,7 @@
     <module>plugins/org.eclipse.wst.internet.cache</module>
     <module>plugins/org.eclipse.wst.validation</module>
     <module>plugins/org.eclipse.wst.validation.ui</module>
+    
+    <module>releng/org.eclipse.webtools.common.repository</module>
   </modules>
 </project>
