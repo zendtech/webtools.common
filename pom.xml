@@ -27,7 +27,7 @@
     <cbi-plugins.version>1.0.5</cbi-plugins.version>
     <cbi-repo.url>https://repo.eclipse.org/content/repositories/cbi/</cbi-repo.url>
     
-	<license-repo.url>http://download.eclipse.org/cbi/updates/license/</license-repo.url>    
+    <license-repo.url>http://download.eclipse.org/cbi/updates/license/</license-repo.url>    
     <platform-repo.url>http://download.eclipse.org/eclipse/updates/4.4/R-4.4-201406061215/</platform-repo.url>
     <emf-repo.url>http://download.eclipse.org/modeling/emf/emf/updates/2.10.x/</emf-repo.url>
     <gef-repo.url>http://download.eclipse.org/tools/gef/updates/milestones/</gef-repo.url>
